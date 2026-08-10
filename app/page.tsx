@@ -1,58 +1,70 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
-type HealthStatus = {
-  status: string;
-  timestamp: string;
-};
+import Link from "next/link";
 
 export default function Home() {
-  const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-    fetch(`${apiUrl}/api/health`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Respuesta del servidor: ${res.status}`);
-        return res.json();
-      })
-      .then((data: HealthStatus) => setHealth(data))
-      .catch((err) => setError(err.message));
-  }, []);
-
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-6 py-32 px-16 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-black dark:text-zinc-50">
-          La Expansión
-        </h1>
+    <>
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-ink text-cream">
+        <svg
+          className="pointer-events-none absolute -right-24 -top-24 h-[560px] w-[560px] opacity-30"
+          viewBox="0 0 400 400"
+          fill="none"
+        >
+          <circle cx="200" cy="200" r="80" stroke="#F2A93B" strokeWidth="1.5" />
+          <circle cx="200" cy="200" r="140" stroke="#2D8C7F" strokeWidth="1.5" />
+          <circle cx="200" cy="200" r="200" stroke="#F2A93B" strokeWidth="1" opacity="0.6" />
+        </svg>
 
-        {error && (
-          <p className="text-red-600 dark:text-red-400">
-            No se pudo conectar con el backend: {error}
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-6 py-32 sm:py-40">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-amber">
+            Movimiento ciudadano
+          </span>
+          {/* PLACEHOLDER: reemplazar con el eslogan real del movimiento */}
+          <h1 className="max-w-2xl font-display text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
+            Un movimiento que expande lo posible.
+          </h1>
+          {/* PLACEHOLDER: reemplazar con la bajada real */}
+          <p className="max-w-xl text-lg text-cream/70">
+            La Expansión nace para representar a quienes creen que otro camino
+            es posible. Súmate al cambio que estamos construyendo.
           </p>
-        )}
-
-        {!error && !health && (
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Conectando con el backend…
-          </p>
-        )}
-
-        {health && (
-          <div className="rounded-lg border border-zinc-200 px-6 py-4 text-left dark:border-zinc-800">
-            <p className="text-zinc-800 dark:text-zinc-200">
-              Estado del backend: <strong>{health.status}</strong>
-            </p>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {health.timestamp}
-            </p>
+          <div className="flex flex-wrap gap-4">
+            <Link
+              href="/afiliate"
+              className="rounded-full bg-amber px-6 py-3 text-sm font-semibold text-ink transition-colors hover:bg-amber/90"
+            >
+              Afíliate ahora
+            </Link>
+            <Link
+              href="/sobre-el-movimiento"
+              className="rounded-full border border-cream/30 px-6 py-3 text-sm font-semibold text-cream transition-colors hover:border-cream/60"
+            >
+              Conoce el movimiento
+            </Link>
           </div>
-        )}
-      </main>
-    </div>
+        </div>
+      </section>
+
+      {/* PILARES — PLACEHOLDER: reemplazar con los valores/ejes reales */}
+      <section className="mx-auto max-w-6xl px-6 py-24">
+        <h2 className="font-display text-3xl font-semibold text-ink">
+          Lo que nos mueve
+        </h2>
+        <div className="mt-10 grid gap-8 sm:grid-cols-3">
+          {[
+            { title: "Cercanía", desc: "Placeholder: texto sobre este pilar." },
+            { title: "Transparencia", desc: "Placeholder: texto sobre este pilar." },
+            { title: "Futuro", desc: "Placeholder: texto sobre este pilar." },
+          ].map((item) => (
+            <div key={item.title} className="border-t-2 border-teal pt-4">
+              <h3 className="font-display text-xl font-semibold text-ink">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-ink/60">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
