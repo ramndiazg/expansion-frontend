@@ -44,6 +44,18 @@ function handleLogoutPara(tipo: "usuario" | "miembro") {
   else cerrarSesionMiembro();
 }
 
+type LinkCuenta = { href: string; label: string };
+
+function linksPara(tipo: "usuario" | "miembro"): LinkCuenta[] {
+  if (tipo === "usuario") {
+    return [
+      { href: "/admin", label: "Panel admin" },
+      { href: "/admin/perfil", label: "Mi perfil" },
+    ];
+  }
+  return [{ href: "/cuenta", label: "Mi cuenta" }];
+}
+
 export default function UserMenu({
   variant = "desktop",
   onNavigate,
@@ -81,10 +93,7 @@ export default function UserMenu({
     );
   }
 
-  const linkCuenta =
-    cuenta.tipo === "usuario"
-      ? { href: "/admin", label: "Panel admin" }
-      : { href: "/cuenta", label: "Cambiar contraseña" };
+  const links = linksPara(cuenta.tipo);
 
   // --- Variante móvil: sin dropdown flotante, todo visible en línea ---
   if (variant === "mobile") {
@@ -101,13 +110,16 @@ export default function UserMenu({
             </p>
           </div>
         </div>
-        <Link
-          href={linkCuenta.href}
-          onClick={onNavigate}
-          className="rounded-lg px-3 py-2.5 text-base font-medium text-ink/80 hover:bg-ink/5"
-        >
-          {linkCuenta.label}
-        </Link>
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={onNavigate}
+            className="rounded-lg px-3 py-2.5 text-base font-medium text-ink/80 hover:bg-ink/5"
+          >
+            {link.label}
+          </Link>
+        ))}
         <button
           onClick={() => {
             handleLogoutPara(cuenta.tipo);
@@ -140,13 +152,16 @@ export default function UserMenu({
               {cuenta.tipo === "usuario" ? "Panel administrativo" : "Miembro"}
             </p>
           </div>
-          <Link
-            href={linkCuenta.href}
-            onClick={() => setAbierto(false)}
-            className="block px-4 py-2 text-sm text-ink/80 hover:bg-ink/5"
-          >
-            {linkCuenta.label}
-          </Link>
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setAbierto(false)}
+              className="block px-4 py-2 text-sm text-ink/80 hover:bg-ink/5"
+            >
+              {link.label}
+            </Link>
+          ))}
           <button
             onClick={() => {
               handleLogoutPara(cuenta.tipo);

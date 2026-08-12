@@ -48,6 +48,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="text-ink/60">
               {usuario?.nombre} · {usuario?.rol}
             </span>
+            <Link href="/admin/perfil" className="font-medium text-blue hover:underline">
+              Mi perfil
+            </Link>
             <button onClick={handleLogout} className="font-medium text-blue hover:underline">
               Cerrar sesión
             </button>
