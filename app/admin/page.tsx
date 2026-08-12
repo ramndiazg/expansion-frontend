@@ -18,6 +18,14 @@ export default function AdminHome() {
           <h2 className="font-display text-lg font-semibold text-ink">Noticias</h2>
           <p className="mt-1 text-sm text-ink/60">Crear y gestionar noticias</p>
         </Link>
+        <Link href="/admin/comentarios" className="rounded-xl border border-ink/10 p-6 hover:border-blue">
+          <h2 className="font-display text-lg font-semibold text-ink">Comentarios</h2>
+          <p className="mt-1 text-sm text-ink/60">Revisar comentarios pendientes</p>
+        </Link>
+        <Link href="/admin/miembros" className="rounded-xl border border-ink/10 p-6 hover:border-blue">
+          <h2 className="font-display text-lg font-semibold text-ink">Miembros</h2>
+          <p className="mt-1 text-sm text-ink/60">Aprobar solicitudes de afiliación</p>
+        </Link>
       </div>
     </div>
   );

@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { obtenerMiembro, cerrarSesionMiembro, type SesionMiembro } from "@/lib/authMiembro";
+import { obtenerMiembro, alCambiarSesionMiembro, type SesionMiembro } from "@/lib/authMiembro";
+import { obtenerUsuario, alCambiarSesionUsuario } from "@/lib/auth";
+import UserMenu from "./UserMenu";
 
 const links = [
   { href: "/noticias", label: "Noticias" },
@@ -13,22 +15,28 @@ const links = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [miembro, setMiembro] = useState<SesionMiembro | null>(null);
+  const [hayUsuario, setHayUsuario] = useState(false);
 
   useEffect(() => {
     let ignore = false;
+
     Promise.resolve().then(() => {
-      if (!ignore) setMiembro(obtenerMiembro());
+      if (ignore) return;
+      setMiembro(obtenerMiembro());
+      setHayUsuario(!!obtenerUsuario());
     });
+
+    const limpiarMiembro = alCambiarSesionMiembro(() => setMiembro(obtenerMiembro()));
+    const limpiarUsuario = alCambiarSesionUsuario(() => setHayUsuario(!!obtenerUsuario()));
+
     return () => {
       ignore = true;
+      limpiarMiembro();
+      limpiarUsuario();
     };
   }, []);
 
-  function handleLogout() {
-    cerrarSesionMiembro();
-    setMiembro(null);
-    setOpen(false);
-  }
+  const haySesion = !!miembro || hayUsuario;
 
   return (
     <header className="sticky top-0 z-50 border-b border-ink/10 bg-white/95 backdrop-blur">
@@ -44,22 +52,13 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {miembro ? (
-            <div className="flex items-center gap-3 text-sm">
-              <span className="text-ink/60">Hola, {miembro.nombre.split(" ")[0]}</span>
-              <button onClick={handleLogout} className="font-medium text-blue hover:underline">
-                Cerrar sesión
-              </button>
-            </div>
-          ) : (
-            <Link href="/login" className="text-sm font-medium text-ink/70 transition-colors hover:text-ink">
-              Iniciar sesión
+          <UserMenu variant="desktop" />
+
+          {!haySesion && (
+            <Link href="/afiliate" className="rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue/90">
+              Afíliate
             </Link>
           )}
-
-          <Link href="/afiliate" className="rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue/90">
-            Afíliate
-          </Link>
         </nav>
 
         <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-ink/10 md:hidden" onClick={() => setOpen((v) => !v)} aria-label="Abrir menú">
@@ -79,19 +78,13 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {miembro ? (
-            <button onClick={handleLogout} className="rounded-lg px-3 py-2.5 text-left text-base font-medium text-ink/80 hover:bg-ink/5">
-              Cerrar sesión ({miembro.nombre.split(" ")[0]})
-            </button>
-          ) : (
-            <Link href="/login" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base font-medium text-ink/80 hover:bg-ink/5">
-              Iniciar sesión
+          <UserMenu variant="mobile" onNavigate={() => setOpen(false)} />
+
+          {!haySesion && (
+            <Link href="/afiliate" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-blue px-5 py-3 text-center text-sm font-semibold text-white">
+              Afíliate
             </Link>
           )}
-
-          <Link href="/afiliate" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-blue px-5 py-3 text-center text-sm font-semibold text-white">
-            Afíliate
-          </Link>
         </nav>
       )}
     </header>
