@@ -12,18 +12,52 @@ type Noticia = {
   createdAt: string;
 };
 
+async function fetchNoticias(): Promise<Noticia[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/noticias`, {
+    headers: { Authorization: `Bearer ${obtenerToken()}` },
+  });
+  return res.json();
+}
+
 export default function AdminNoticias() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [cargando, setCargando] = useState(true);
+  const [actualizando, setActualizando] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/noticias`, {
-      headers: { Authorization: `Bearer ${obtenerToken()}` },
-    })
-      .then((res) => res.json())
-      .then(setNoticias)
-      .finally(() => setCargando(false));
+    let ignore = false;
+
+    fetchNoticias().then((data) => {
+      if (!ignore) {
+        setNoticias(data);
+        setCargando(false);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
   }, []);
+
+  async function togglePublicar(noticia: Noticia) {
+    setActualizando(noticia._id);
+    const nuevoEstado = noticia.estado === "publicado" ? "borrador" : "publicado";
+    const body: Record<string, unknown> = { estado: nuevoEstado };
+    if (nuevoEstado === "publicado") body.fechaPublicacion = new Date().toISOString();
+
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/noticias/${noticia._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${obtenerToken()}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await fetchNoticias();
+    setNoticias(data);
+    setActualizando(null);
+  }
 
   return (
     <div>
@@ -40,9 +74,22 @@ export default function AdminNoticias() {
         {noticias.map((n) => (
           <div key={n._id} className="flex items-center justify-between rounded-lg border border-ink/10 px-4 py-3">
             <span className="text-ink">{n.titulo}</span>
-            <span className={`rounded-full px-3 py-1 text-xs font-medium ${n.estado === "publicado" ? "bg-green-100 text-green-700" : "bg-ink/10 text-ink/60"}`}>
-              {n.estado}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className={`rounded-full px-3 py-1 text-xs font-medium ${n.estado === "publicado" ? "bg-green-100 text-green-700" : "bg-ink/10 text-ink/60"}`}>
+                {n.estado}
+              </span>
+              <button
+                onClick={() => togglePublicar(n)}
+                disabled={actualizando === n._id}
+                className="text-sm font-medium text-blue hover:underline disabled:opacity-50"
+              >
+                {actualizando === n._id
+                  ? "..."
+                  : n.estado === "publicado"
+                    ? "Despublicar"
+                    : "Publicar"}
+              </button>
+            </div>
           </div>
         ))}
       </div>

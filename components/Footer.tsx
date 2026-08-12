@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="border-t border-ink/10 bg-ink text-white/80">
@@ -7,9 +9,12 @@ export default function Footer() {
           {/* PLACEHOLDER: reemplazar con la descripción/lema real del movimiento */}
           Un movimiento ciudadano comprometido con el futuro del país.
         </p>
-        <p className="mt-6 text-xs text-white/40">
-          © {new Date().getFullYear()} La Expansión. Todos los derechos reservados.
-        </p>
+        <div className="mt-6 flex items-center justify-between text-xs text-white/40">
+          <p>© {new Date().getFullYear()} La Expansión. Todos los derechos reservados.</p>
+          <Link href="/login" className="hover:text-white/70">
+            Panel administrativo
+          </Link>
+        </div>
       </div>
     </footer>
   );

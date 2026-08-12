@@ -1,35 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { obtenerToken, obtenerUsuario, cerrarSesion, type SesionUsuario } from "@/lib/auth";
 import Link from "next/link";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
   const router = useRouter();
   const [usuario, setUsuario] = useState<SesionUsuario | null>(null);
   const [listo, setListo] = useState(false);
 
-  const esLogin = pathname === "/admin/login";
-
   useEffect(() => {
-    const token = obtenerToken();
-    const user = obtenerUsuario();
-    if (!token && !esLogin) {
-      router.replace("/admin/login");
-      return;
-    }
-    setUsuario(user);
-    setListo(true);
-  }, [pathname, esLogin, router]);
+    let ignore = false;
 
-  if (esLogin) return <>{children}</>;
+    Promise.resolve().then(() => {
+      if (ignore) return;
+      const token = obtenerToken();
+      const user = obtenerUsuario();
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+      setUsuario(user);
+      setListo(true);
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [router]);
+
   if (!listo) return null;
 
   function handleLogout() {
     cerrarSesion();
-    router.replace("/admin/login");
+    router.replace("/login");
   }
 
   return (

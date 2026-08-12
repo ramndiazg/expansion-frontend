@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Comentarios from "@/components/Comentarios";
 
 type Noticia = {
   _id: string;
@@ -117,6 +118,8 @@ export default async function NoticiaDetalle({
           ))}
         </div>
       )}
+
+      <Comentarios noticiaId={noticia._id} />
     </article>
   );
 }
