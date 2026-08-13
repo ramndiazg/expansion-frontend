@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="mt-6 flex items-center justify-between text-xs text-white/40">
           <p>© {new Date().getFullYear()} La Expansión. Todos los derechos reservados.</p>
           <Link href="/login" className="hover:text-white/70">
-            Panel administrativo
+
           </Link>
         </div>
       </div>
