@@ -1,6 +1,28 @@
 import Link from "next/link";
 
-export default function Home() {
+type Encuesta = {
+  slug: string;
+  pregunta: string;
+  opciones: { _id: string; texto: string; votos: number }[];
+};
+
+async function getEncuestaDestacada(): Promise<Encuesta | null> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/encuestas?activa=true`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const encuestas = await res.json();
+    return encuestas[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function Home() {
+  const encuestaDestacada = await getEncuestaDestacada();
+
   return (
     <>
       <section className="relative overflow-hidden bg-ink text-white">
@@ -63,6 +85,25 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {encuestaDestacada && (
+        <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+          <div className="rounded-2xl border border-ink/10 bg-ink/[0.02] p-8 sm:p-10">
+            <span className="text-xs font-medium uppercase tracking-wide text-blue">
+              Encuesta activa
+            </span>
+            <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">
+              {encuestaDestacada.pregunta}
+            </h2>
+            <Link
+              href={`/encuestas/${encuestaDestacada.slug}`}
+              className="mt-6 inline-block rounded-full bg-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue/90"
+            >
+              Ver y votar
+            </Link>
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
         <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">
