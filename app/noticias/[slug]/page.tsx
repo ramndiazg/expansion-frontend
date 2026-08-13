@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Comentarios from "@/components/Comentarios";
+import ShareButtons from "@/components/ShareButtons";
 
 type Noticia = {
   _id: string;
@@ -53,6 +54,7 @@ export default async function NoticiaDetalle({
   if (!noticia) notFound();
 
   const embedUrl = noticia.videoUrl ? youtubeEmbedUrl(noticia.videoUrl) : null;
+  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/noticias/${noticia.slug}`;
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
@@ -118,6 +120,12 @@ export default async function NoticiaDetalle({
           ))}
         </div>
       )}
+
+      <ShareButtons
+        url={url}
+        titulo={noticia.titulo}
+        texto={noticia.resumen}
+      />
 
       <Comentarios noticiaId={noticia._id} />
     </article>
