@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { provincias, provinciasMunicipios } from "@/lib/provinciasMunicipios";
 
-export default function Afiliate() {
+function AfiliateForm() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
@@ -71,6 +76,18 @@ export default function Afiliate() {
           notificaremos cuando esté aprobada — a partir de ahí podrás iniciar
           sesión con tu email y contraseña.
         </p>
+        {redirect && (
+          <p className="mt-4 text-sm text-ink/60">
+            Cuando tu afiliación esté aprobada,{" "}
+            <Link
+              href={`/login?redirect=${encodeURIComponent(redirect)}`}
+              className="font-medium text-blue hover:underline"
+            >
+              vuelve aquí para iniciar sesión
+            </Link>{" "}
+            y podrás votar en la encuesta.
+          </p>
+        )}
       </div>
     );
   }
@@ -175,5 +192,13 @@ export default function Afiliate() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function Afiliate() {
+  return (
+    <Suspense fallback={null}>
+      <AfiliateForm />
+    </Suspense>
   );
 }

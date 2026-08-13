@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { guardarSesion } from "@/lib/auth";
 import { guardarSesionMiembro } from "@/lib/authMiembro";
 
-export default function Login() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -31,7 +33,7 @@ export default function Login() {
         router.push("/admin");
       } else {
         guardarSesionMiembro(data.token, data.miembro);
-        router.push("/");
+        router.push(redirect || "/");
         router.refresh();
       }
     } catch (err) {
@@ -63,8 +65,21 @@ export default function Login() {
       </form>
       <p className="mt-6 text-sm text-ink/60">
         ¿Todavía no eres miembro?{" "}
-        <Link href="/afiliate" className="font-medium text-blue hover:underline">Afíliate aquí</Link>
+        <Link
+          href={redirect ? `/afiliate?redirect=${encodeURIComponent(redirect)}` : "/afiliate"}
+          className="font-medium text-blue hover:underline"
+        >
+          Afíliate aquí
+        </Link>
       </p>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
