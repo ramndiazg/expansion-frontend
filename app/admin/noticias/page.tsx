@@ -7,6 +7,7 @@ import { obtenerToken } from "@/lib/auth";
 type Noticia = {
   _id: string;
   titulo: string;
+  slug: string;
   estado: string;
   categoria: string;
   createdAt: string;
@@ -78,6 +79,12 @@ export default function AdminNoticias() {
               <span className={`rounded-full px-3 py-1 text-xs font-medium ${n.estado === "publicado" ? "bg-green-100 text-green-700" : "bg-ink/10 text-ink/60"}`}>
                 {n.estado}
               </span>
+              <Link
+                href={`/admin/noticias/${n.slug}/editar`}
+                className="text-sm font-medium text-blue hover:underline"
+              >
+                Editar
+              </Link>
               <button
                 onClick={() => togglePublicar(n)}
                 disabled={actualizando === n._id}
