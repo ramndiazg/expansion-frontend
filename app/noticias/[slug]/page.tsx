@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Comentarios from "@/components/Comentarios";
 import ShareButtons from "@/components/ShareButtons";
 
@@ -35,6 +36,34 @@ async function getNoticia(slug: string): Promise<Noticia | null> {
   } catch {
     return null;
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const noticia = await getNoticia(slug);
+
+  if (!noticia) return { title: "Noticia no encontrada" };
+
+  return {
+    title: noticia.titulo,
+    description: noticia.resumen,
+    openGraph: {
+      title: noticia.titulo,
+      description: noticia.resumen,
+      type: "article",
+      images: noticia.imagenDestacada ? [{ url: noticia.imagenDestacada }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: noticia.titulo,
+      description: noticia.resumen,
+      images: noticia.imagenDestacada ? [noticia.imagenDestacada] : undefined,
+    },
+  };
 }
 
 export default async function NoticiaDetalle({

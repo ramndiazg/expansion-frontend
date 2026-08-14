@@ -14,9 +14,25 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "La Expansión",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "La Expansión",
+    template: "%s | La Expansión",
+  },
   description: "Sitio oficial del movimiento La Expansión",
+  openGraph: {
+    siteName: "La Expansión",
+    type: "website",
+    locale: "es_DO",
+    title: "La Expansión",
+    description: "Sitio oficial del movimiento La Expansión",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

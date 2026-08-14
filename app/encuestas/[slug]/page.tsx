@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import ShareButtons from "@/components/ShareButtons";
 import EncuestaVotacion from "@/components/EncuestaVotacion";
 
@@ -22,6 +23,34 @@ async function getEncuesta(slug: string): Promise<Encuesta | null> {
   } catch {
     return null;
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const encuesta = await getEncuesta(slug);
+
+  if (!encuesta) return { title: "Encuesta no encontrada" };
+
+  const descripcion = `Vota en esta encuesta de La Expansión: ${encuesta.pregunta}`;
+
+  return {
+    title: encuesta.pregunta,
+    description: descripcion,
+    openGraph: {
+      title: encuesta.pregunta,
+      description: descripcion,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: encuesta.pregunta,
+      description: descripcion,
+    },
+  };
 }
 
 export default async function EncuestaDetalle({
