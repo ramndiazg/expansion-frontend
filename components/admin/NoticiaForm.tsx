@@ -11,7 +11,6 @@ export type NoticiaFormData = {
   autor: string;
   imagenDestacada: string;
   imagenesAdicionales: string[];
-  videoUrl: string;
 };
 
 type NoticiaFormProps = {
@@ -28,7 +27,6 @@ const vacio: NoticiaFormData = {
   autor: "",
   imagenDestacada: "",
   imagenesAdicionales: [],
-  videoUrl: "",
 };
 
 export default function NoticiaForm({ initial, onSubmit, submitLabel }: NoticiaFormProps) {
@@ -140,16 +138,6 @@ export default function NoticiaForm({ initial, onSubmit, submitLabel }: NoticiaF
         >
           + Agregar imagen a la galería
         </button>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-ink/70">Video de YouTube (opcional)</label>
-        <input
-          value={form.videoUrl}
-          onChange={(e) => update("videoUrl", e.target.value)}
-          placeholder="https://youtube.com/watch?v=..."
-          className="mt-1 w-full rounded-lg border border-ink/15 px-3 py-2 outline-none focus:border-blue"
-        />
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

@@ -8,6 +8,7 @@ import UserMenu from "./UserMenu";
 
 const links = [
   { href: "/noticias", label: "Noticias" },
+  { href: "/videos", label: "Videos" },
   { href: "/encuestas", label: "Encuestas" },
   { href: "/sobre-el-movimiento", label: "Sobre el movimiento" },
   { href: "/liderazgo", label: "Liderazgo" },

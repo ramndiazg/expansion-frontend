@@ -18,6 +18,10 @@ export default function AdminHome() {
           <h2 className="font-display text-lg font-semibold text-ink">Noticias</h2>
           <p className="mt-1 text-sm text-ink/60">Crear y gestionar noticias</p>
         </Link>
+        <Link href="/admin/videos" className="rounded-xl border border-ink/10 p-6 hover:border-blue">
+          <h2 className="font-display text-lg font-semibold text-ink">Videos</h2>
+          <p className="mt-1 text-sm text-ink/60">Publicar videos de YouTube</p>
+        </Link>
         <Link href="/admin/encuestas" className="rounded-xl border border-ink/10 p-6 hover:border-blue">
           <h2 className="font-display text-lg font-semibold text-ink">Encuestas</h2>
           <p className="mt-1 text-sm text-ink/60">Crear encuestas y ver resultados</p>

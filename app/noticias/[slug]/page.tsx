@@ -12,7 +12,6 @@ type Noticia = {
   autor: string;
   imagenDestacada?: string;
   imagenesAdicionales?: string[];
-  videoUrl?: string;
   fechaPublicacion?: string;
   createdAt: string;
   tags: string[];
@@ -24,11 +23,6 @@ const categoriaLabels: Record<string, string> = {
   declaracion: "Declaración",
   en_los_medios: "En los medios",
 };
-
-function youtubeEmbedUrl(url: string): string | null {
-  const match = url.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
-  return match ? `https://www.youtube.com/embed/${match[1]}` : null;
-}
 
 async function getNoticia(slug: string): Promise<Noticia | null> {
   try {
@@ -53,7 +47,6 @@ export default async function NoticiaDetalle({
 
   if (!noticia) notFound();
 
-  const embedUrl = noticia.videoUrl ? youtubeEmbedUrl(noticia.videoUrl) : null;
   const url = `${process.env.NEXT_PUBLIC_SITE_URL}/noticias/${noticia.slug}`;
 
   return (
@@ -85,17 +78,6 @@ export default async function NoticiaDetalle({
       <div className="mt-10 whitespace-pre-line text-lg leading-relaxed text-ink/80">
         {noticia.contenido}
       </div>
-
-      {embedUrl && (
-        <div className="mt-10 aspect-video w-full overflow-hidden rounded-xl">
-          <iframe
-            src={embedUrl}
-            className="h-full w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      )}
 
       {noticia.imagenesAdicionales && noticia.imagenesAdicionales.length > 0 && (
         <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
