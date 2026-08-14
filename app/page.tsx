@@ -7,6 +7,21 @@ type Encuesta = {
   opciones: { _id: string; texto: string; votos: number }[];
 };
 
+type Noticia = {
+  slug: string;
+  titulo: string;
+  resumen: string;
+  imagenDestacada?: string;
+  categoria: string;
+};
+
+const categoriaLabels: Record<string, string> = {
+  comunicado: "Comunicado",
+  actividad: "Actividad",
+  declaracion: "Declaración",
+  en_los_medios: "En los medios",
+};
+
 async function getEncuestaDestacada(): Promise<Encuesta | null> {
   try {
     const res = await fetch(
@@ -21,8 +36,25 @@ async function getEncuestaDestacada(): Promise<Encuesta | null> {
   }
 }
 
+async function getUltimaNoticia(): Promise<Noticia | null> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/noticias?estado=publicado`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const noticias = await res.json();
+    return noticias[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function Home() {
-  const encuestaDestacada = await getEncuestaDestacada();
+  const [encuestaDestacada, ultimaNoticia] = await Promise.all([
+    getEncuestaDestacada(),
+    getUltimaNoticia(),
+  ]);
 
   return (
     <>
@@ -88,6 +120,39 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {ultimaNoticia && (
+        <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+          <Link
+            href={`/prensa/${ultimaNoticia.slug}`}
+            className="group grid gap-6 overflow-hidden rounded-2xl border border-ink/10 transition-colors hover:border-slate sm:grid-cols-2"
+          >
+            <div className="aspect-video bg-ink/5 sm:aspect-auto">
+              {ultimaNoticia.imagenDestacada ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={ultimaNoticia.imagenDestacada}
+                  alt={ultimaNoticia.titulo}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-ink/20">
+                  La Expansión
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col justify-center p-6 sm:p-8">
+              <span className="text-xs font-medium uppercase tracking-wide text-blue">
+                Sala de Prensa · {categoriaLabels[ultimaNoticia.categoria] ?? ultimaNoticia.categoria}
+              </span>
+              <h2 className="mt-3 font-display text-2xl font-semibold text-ink group-hover:text-blue sm:text-3xl">
+                {ultimaNoticia.titulo}
+              </h2>
+              <p className="mt-3 text-ink/60">{ultimaNoticia.resumen}</p>
+            </div>
+          </Link>
+        </section>
+      )}
 
       {encuestaDestacada && (
         <section className="mx-auto max-w-6xl px-6 py-16 sm:py-20">

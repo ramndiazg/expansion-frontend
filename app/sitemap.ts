@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const paginasEstaticas: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
-    { url: `${siteUrl}/noticias`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${siteUrl}/prensa`, changeFrequency: "daily", priority: 0.9 },
     { url: `${siteUrl}/encuestas`, changeFrequency: "daily", priority: 0.8 },
     { url: `${siteUrl}/videos`, changeFrequency: "weekly", priority: 0.6 },
     {
@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const paginasNoticias: MetadataRoute.Sitemap = noticias.map((n) => ({
-    url: `${siteUrl}/noticias/${n.slug}`,
+    url: `${siteUrl}/prensa/${n.slug}`,
     lastModified: n.createdAt,
     changeFrequency: "monthly",
     priority: 0.6,

@@ -15,7 +15,7 @@ export default function AdminHome() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Link href="/admin/noticias" className="rounded-xl border border-ink/10 p-6 hover:border-blue">
-          <h2 className="font-display text-lg font-semibold text-ink">Noticias</h2>
+          <h2 className="font-display text-lg font-semibold text-ink">Sala de Prensa</h2>
           <p className="mt-1 text-sm text-ink/60">Crear y gestionar noticias</p>
         </Link>
         <Link href="/admin/videos" className="rounded-xl border border-ink/10 p-6 hover:border-blue">

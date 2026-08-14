@@ -8,7 +8,7 @@ import UserMenu from "./UserMenu";
 import Logo from "./Logo";
 
 const links = [
-  { href: "/noticias", label: "Noticias" },
+  { href: "/prensa", label: "Sala de Prensa" },
   { href: "/videos", label: "Videos" },
   { href: "/encuestas", label: "Encuestas" },
   { href: "/sobre-el-movimiento", label: "Sobre el movimiento" },
