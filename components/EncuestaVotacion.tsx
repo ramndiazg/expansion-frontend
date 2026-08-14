@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { obtenerMiembro, obtenerTokenMiembro } from "@/lib/authMiembro";
+import { obtenerVotanteId, yaVoto, marcarVotado } from "@/lib/votante";
 
 type Opcion = { _id: string; texto: string; votos: number };
 
@@ -15,37 +14,17 @@ type Encuesta = {
 };
 
 export default function EncuestaVotacion({ encuesta }: { encuesta: Encuesta }) {
-  const router = useRouter();
   const [datos, setDatos] = useState(encuesta);
-  const [yaVoto, setYaVoto] = useState(false);
-  const [cargandoEstado, setCargandoEstado] = useState(true);
+  const [votado, setVotado] = useState(false);
+  const [listo, setListo] = useState(false);
   const [votando, setVotando] = useState(false);
   const [error, setError] = useState("");
 
-  const miembro = obtenerMiembro();
-
   useEffect(() => {
-    async function chequearEstado() {
-      if (!miembro) {
-        setCargandoEstado(false);
-        return;
-      }
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/encuestas/${datos._id}/mi-estado`,
-          {
-            headers: { Authorization: `Bearer ${obtenerTokenMiembro()}` },
-          }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setYaVoto(data.yaVoto);
-        }
-      } finally {
-        setCargandoEstado(false);
-      }
-    }
-    chequearEstado();
+    Promise.resolve().then(() => {
+      setVotado(yaVoto(datos.slug));
+      setListo(true);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -53,17 +32,20 @@ export default function EncuestaVotacion({ encuesta }: { encuesta: Encuesta }) {
     setError("");
     setVotando(true);
     try {
+      const votanteId = obtenerVotanteId();
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/encuestas/${datos._id}/votar/${opcionId}`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${obtenerTokenMiembro()}` },
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ votanteId }),
         }
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo registrar el voto");
       setDatos(data);
-      setYaVoto(true);
+      marcarVotado(datos.slug);
+      setVotado(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
@@ -71,20 +53,10 @@ export default function EncuestaVotacion({ encuesta }: { encuesta: Encuesta }) {
     }
   }
 
-  function irARegistrarse() {
-    const retorno = `/encuestas/${datos.slug}`;
-    router.push(`/afiliate?redirect=${encodeURIComponent(retorno)}`);
-  }
-
-  function irALogin() {
-    const retorno = `/encuestas/${datos.slug}`;
-    router.push(`/login?redirect=${encodeURIComponent(retorno)}`);
-  }
-
   const totalVotos = datos.opciones.reduce((acc, o) => acc + o.votos, 0);
-  const mostrarResultados = yaVoto || !datos.activa;
+  const mostrarResultados = votado || !datos.activa;
 
-  if (cargandoEstado) {
+  if (!listo) {
     return <p className="mt-8 text-sm text-ink/50">Cargando...</p>;
   }
 
@@ -109,10 +81,10 @@ export default function EncuestaVotacion({ encuesta }: { encuesta: Encuesta }) {
           <p className="mt-2 text-xs text-ink/50">
             {totalVotos} voto{totalVotos !== 1 ? "s" : ""}
             {!datos.activa && " · Encuesta cerrada"}
-            {yaVoto && datos.activa && " · Ya votaste"}
+            {votado && datos.activa && " · Ya votaste"}
           </p>
         </div>
-      ) : miembro ? (
+      ) : (
         <div className="flex flex-col gap-2">
           {datos.opciones.map((op) => (
             <button
@@ -125,26 +97,6 @@ export default function EncuestaVotacion({ encuesta }: { encuesta: Encuesta }) {
             </button>
           ))}
           {error && <p className="text-sm text-red-600">{error}</p>}
-        </div>
-      ) : (
-        <div className="rounded-lg border border-ink/10 bg-ink/[0.03] p-5">
-          <p className="text-sm text-ink/70">
-            Solo los miembros afiliados pueden votar en las encuestas.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            <button
-              onClick={irARegistrarse}
-              className="rounded-full bg-blue px-5 py-2 text-sm font-semibold text-white"
-            >
-              Afiliarme
-            </button>
-            <button
-              onClick={irALogin}
-              className="rounded-full border border-ink/15 px-5 py-2 text-sm font-medium text-ink/80"
-            >
-              Ya soy miembro, iniciar sesión
-            </button>
-          </div>
         </div>
       )}
     </div>
