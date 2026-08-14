@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 type Encuesta = {
   slug: string;
@@ -37,6 +38,8 @@ export default async function Home() {
         </svg>
 
         <div className="relative mx-auto flex max-w-6xl flex-col gap-6 px-6 py-20 sm:gap-8 sm:py-32 lg:py-40">
+          <Logo variant="full" tone="light" size="lg" showTagline className="mb-2" />
+
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-blue">
             Movimiento ciudadano
           </span>

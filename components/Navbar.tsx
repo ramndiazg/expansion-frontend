@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { obtenerMiembro, alCambiarSesionMiembro, type SesionMiembro } from "@/lib/authMiembro";
 import { obtenerUsuario, alCambiarSesionUsuario } from "@/lib/auth";
 import UserMenu from "./UserMenu";
+import Logo from "./Logo";
 
 const links = [
   { href: "/noticias", label: "Noticias" },
@@ -43,8 +44,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-ink/10 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-        <Link href="/" className="font-display text-xl font-semibold tracking-tight text-ink" onClick={() => setOpen(false)}>
-          La Expansión
+        <Link href="/" onClick={() => setOpen(false)}>
+          <Logo />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
