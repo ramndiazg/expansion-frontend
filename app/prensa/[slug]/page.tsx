@@ -55,6 +55,7 @@ export async function generateMetadata({
       title: noticia.titulo,
       description: noticia.resumen,
       type: "article",
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/prensa/${noticia.slug}`,
       images: noticia.imagenDestacada ? [{ url: noticia.imagenDestacada }] : undefined,
     },
     twitter: {
