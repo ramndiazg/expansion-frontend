@@ -44,6 +44,7 @@ export async function generateMetadata({
       title: encuesta.pregunta,
       description: descripcion,
       type: "website",
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/encuestas/${encuesta.slug}`,
     },
     twitter: {
       card: "summary",
